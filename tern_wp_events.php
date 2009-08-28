@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: Events Displayed
+Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
-Description: Page through events.
+Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.0
+Version: 2.0.1
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -17,7 +17,7 @@ Licensing : http://www.ternstyle.us/license.html
 ////	Account:
 ////		Added on September 2nd 2008
 ////	Version:
-////		2.4
+////		2.0.1
 ////
 ////	Written by Matthew Praetzel. Copyright (c) 2008 Matthew Praetzel.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,14 +202,17 @@ function tern_wp_events_save($i) {
 			if($_POST['tern_wp_event_start_meridiem'] == 'pm' and intval($_POST['tern_wp_event_start_hour']) != 12) {
 				$h = intval($_POST['tern_wp_event_start_hour'])+12;
 			}
-			update_post_meta($i,$n,gmmktime($h,$_POST['tern_wp_event_start_minute'],0,$_POST['tern_wp_event_start_month'],$_POST['tern_wp_event_start_day'],$_POST['tern_wp_event_start_year']));
+			$start = gmmktime($h,$_POST['tern_wp_event_start_minute'],0,$_POST['tern_wp_event_start_month'],$_POST['tern_wp_event_start_day'],$_POST['tern_wp_event_start_year']);
+			update_post_meta($i,$n,$start);
 		}
 		elseif($n == '_tern_wp_event_end_date') {
 			$h = $_POST['tern_wp_event_end_hour'];
 			if($_POST['tern_wp_event_end_meridiem'] == 'pm' and intval($_POST['tern_wp_event_end_hour']) != 12) {
 				$h = intval($_POST['tern_wp_event_end_hour'])+12;
 			}
-			update_post_meta($i,$n,gmmktime($h,$_POST['tern_wp_event_end_minute'],0,$_POST['tern_wp_event_end_month'],$_POST['tern_wp_event_end_day'],$_POST['tern_wp_event_end_year']));
+			$end = gmmktime($h,$_POST['tern_wp_event_end_minute'],0,$_POST['tern_wp_event_end_month'],$_POST['tern_wp_event_end_day'],$_POST['tern_wp_event_end_year']);
+			$end = $start > $end ? $start : $end;
+			update_post_meta($i,$n,$end);
 		}
 		else {
 			update_post_meta($i,$n,$_POST[$n]);

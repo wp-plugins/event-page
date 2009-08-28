@@ -4,7 +4,7 @@ Donate link: http://www.ternstyle.us/donate
 Tags: events, event page, shows, date, time, dates, event dates, date and time, post date, post time, post event, event list
 Requires at least: 2.8
 Tested up to: 2.8.4
-Stable tag: 2.0
+Stable tag: 2.0.1
 
 The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 
@@ -48,6 +48,10 @@ Template Name: Events
 * Documentation: `http://wiki.ternstyle.us/index.php/Wordpress_Event_Page_Plugin_Documentation`
 
 == Frequently Asked Questions ==
+
+= How do I make a post an event? =
+
+When editing a page you'll notice at the bottom of page there is a box entitled "Event Information" fill out the appropriate date and time here. Also, you'll need to place the event in the category that you specified in the Event Page settings.
 
 == Screenshots ==
 
