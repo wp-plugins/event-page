@@ -107,8 +107,8 @@ class selectClass {
 		$os = $this -> compileSelect($j,$i,$n,$t,$c,$sv,$o,$m);
 		return $os;
 	}
-	//start, finish, id, name, title, class, select value, selected value, javascript, multiple?
-	function createNumberOptions($s,$f,$i='',$n='',$t='',$c='',$wf=array(),$j='',$m=false,$l=false) {
+	//start, finish, id, name, title, class, selected value, javascript, multiple?
+	function createNumberOptions($s,$f,$id='',$n='',$t='',$c='',$wf=array(),$j='',$m=false,$l=false) {
 		$wf = $this->selected($wf);
 		$b = $s;
 		if($s < $f) {
@@ -130,7 +130,7 @@ class selectClass {
 				$o .= '<option value="' . $b . '"' . $k . '>' . $b . '</option>';
 			}
 		}
-		$os = $this -> compileSelect($j,$i,$n,$t,$c,false,$o,$m);
+		$os = $this -> compileSelect($j,$id,$n,$t,$c,false,$o,$m);
 		return $os;
 	}
 	//javascript, id, name, title, class, select value, options, multiple?

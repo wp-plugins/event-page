@@ -4,7 +4,7 @@ Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
 Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.0.2
+Version: 2.0.3
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -17,7 +17,7 @@ Licensing : http://www.ternstyle.us/license.html
 ////	Account:
 ////		Added on September 2nd 2008
 ////	Version:
-////		2.0.2
+////		2.0.3
 ////
 ////	Written by Matthew Praetzel. Copyright (c) 2008 Matthew Praetzel.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -580,7 +580,8 @@ function tern_wp_event_meta() {
 			echo '<input type="text" name="'.$v['name'].'" id="'.$v['name'].'" size="30" value="'.$$v['name'].'" />';
 		}
 	}
-	//	
+	//
+	echo $_tern_wp_event_start_date.":".$_tern_wp_event_end_date;
 	echo '<div>';
 	echo '<label for="tern_wp_event_start_month">';
 	$m = empty($_tern_wp_event_start_date) ? intval(gmdate('n',$n)) : intval(gmdate('n',$_tern_wp_event_start_date));
@@ -605,12 +606,12 @@ function tern_wp_event_meta() {
 	
 	echo '<label for="tern_wp_event_start_minute">';
 	//$i = empty($tern_wp_event_start_date) ? intval(gmdate('i',$n)) : intval(gmdate('i',$tern_wp_event_start_date));
-	$i = empty($t_ern_wp_event_start_date) ? 0 : intval(gmdate('i',$_tern_wp_event_start_date));
+	$i = empty($_tern_wp_event_start_date) ? 0 : intval(gmdate('i',$_tern_wp_event_start_date));
 	echo $getOPTS->createNumberOptions(00,59,'tern_wp_event_start_minute','tern_wp_event_start_minute','Start Minute','',array($i),'',false,true);
 	echo '<br /><span>start minute</span></label>';
 	
 	echo '<label for="tern_wp_event_start_meridiem">';
-	$a = empty($_tern_wp_event_start_date) ? intval(gmdate('a',$n)) : intval(gmdate('a',$_tern_wp_event_start_date));
+	$a = empty($_tern_wp_event_start_date) ? 'pm' : gmdate('a',$_tern_wp_event_start_date);
 	echo $getOPTS->select(array('am','pm'),'tern_wp_event_start_meridiem','tern_wp_event_start_meridiem','Start Meridiem','',false,array($a));
 	echo '<br /><span>start meridiem</span></label>';
 	echo '</div>';
@@ -644,7 +645,7 @@ function tern_wp_event_meta() {
 	echo '<br /><span>end minute</span></label>';
 	
 	echo '<label for="tern_wp_event_end_meridiem">';
-	$a = empty($_tern_wp_event_end_date) ? intval(gmdate('a',$n)) : intval(gmdate('a',$_tern_wp_event_end_date));
+	$a = empty($_tern_wp_event_end_date) ? 'pm' : gmdate('a',$_tern_wp_event_end_date);
 	echo $getOPTS->select(array('am','pm'),'tern_wp_event_end_meridiem','tern_wp_event_end_meridiem','End Meridiem','',false,array($a));
 	echo '<br /><span>end meridiem</span></label>';
 	echo '</div>';
