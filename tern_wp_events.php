@@ -581,7 +581,6 @@ function tern_wp_event_meta() {
 		}
 	}
 	//
-	echo $_tern_wp_event_start_date.":".$_tern_wp_event_end_date;
 	echo '<div>';
 	echo '<label for="tern_wp_event_start_month">';
 	$m = empty($_tern_wp_event_start_date) ? intval(gmdate('n',$n)) : intval(gmdate('n',$_tern_wp_event_start_date));
