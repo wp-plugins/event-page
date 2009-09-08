@@ -1,0 +1,23 @@
+/**************************************************************************************************/
+/***
+/***	TERNSTYLE (TM) WORDPRESS SHOW DATES PLUGIN DOCUMENT
+/***	-----------------------------------------------------------------------
+/***	Written by Matthew Praetzel. Copyright (c) 2009 Matthew Praetzel.
+/***	-----------------------------------------------------------------------
+/***	
+/***
+/**************************************************************************************************/
+
+/*-----------------------
+	ADMIN
+-----------------------*/
+textarea.tern_event_fields { width:100%; }
+
+.tern_wp_event_form { margin-bottom:10px; }
+.tern_wp_pagination { display:block;float:left;clear:both;width:100%;margin:0px;paddng:0px; }
+.tern_wp_pagination li { display:block;float:left;border:1px solid rgb(204, 204, 204);padding:5px; }
+
+#tern_wp_event_meta label, #tern_wp_event_meta input, #tern_wp_event_meta select { font-size:14px; }
+#tern_wp_event_meta div.inside label { display:inline-block;margin:0 10px 10px 0;font-weight:bold; }
+#tern_wp_event_meta input { width:100%;line-height:22px;margin-bottom:10px; }
+#tern_wp_event_meta div.inside span { font-size:10px;font-weight:normal; }
