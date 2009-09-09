@@ -4,7 +4,7 @@ Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
 Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.0.3
+Version: 2.0.4
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -17,7 +17,7 @@ Licensing : http://www.ternstyle.us/license.html
 ////	Account:
 ////		Added on September 2nd 2008
 ////	Version:
-////		2.0.3
+////		2.0.4
 ////
 ////	Written by Matthew Praetzel. Copyright (c) 2008 Matthew Praetzel.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ Licensing : http://www.ternstyle.us/license.html
 $tern_wp_event_defaults = array(
 	'show_time'		=>	1,
 	'end_time'		=>	0,
-	'format'		=>	'l F t, Y',
+	'format'		=>	'l F j, Y',
 	'time'			=>	'g:ia',
 	'date_markup'	=>	'',
 	'time_markup'	=>	'',
@@ -102,7 +102,7 @@ $tern_wp_event_markup_fields = array(
 	'Post Content'	=>	array(
 		'field'	=>	'post_content',
 		'func'	=>	'get_the_content',
-		'args'	=>	'"read more..."'
+		'args'	=>	array('read more...')
 	),
 	'Post Excerpt'	=>	array(
 		'field'	=>	'post_excerpt',
@@ -261,9 +261,8 @@ function tern_wp_event_actions() {
 			}
 		}
 		//attempted to update all fields without nonce
-		elseif($_REQUEST['action'] == 'update' or $_REQUEST['action'] == 'add' or $_REQUEST['action'] == 'delete') {
-			echo '<div id="message" class="updated fade"><p>There was an error whil processing your request. Please try again.</p></div>';
-			die();
+		elseif($_REQUEST['action'] == 'update' or $_REQUEST['action'] == 'add' or $_REQUEST['action'] == 'remove') {
+			$tern_msg = '<div id="message" class="updated fade"><p>There was an error whil processing your request. Please try again.</p></div>';
 		}
 		//get sample mark-up
 		if($_REQUEST['action'] == 'getmarkup') {
@@ -475,7 +474,7 @@ function tern_wp_event_markup_options() {
 								continue 2;
 							}
 						}
-						$a['Standard Fields'][] = array($k,$v);
+						$a['Standard Fields'][] = array($k,$v['field']);
 					}
 					$r = $wpdb->get_col("select distinct meta_key from $wpdb->postmeta");
 					foreach($r as $v) {
@@ -729,9 +728,9 @@ function tern_wp_event_markup() {
 		foreach($o['fields'] as $k => $v) {
 			$args = '';
 			if($tern_wp_event_markup_fields[$k]['args']) {
-				$args = $tern_wp_event_markup_fields[$k]['args'] == 'id' ? $p->ID : $tern_wp_event_markup_fields[$k]['args'];
+				$args = $tern_wp_event_markup_fields[$k]['args'] == 'id' ? array($post->ID) : $tern_wp_event_markup_fields[$k]['args'];
 			}
-			eval('$w = '.$tern_wp_event_markup_fields[$k]['func'].'('.$args.');');
+			$w = call_user_func_array($tern_wp_event_markup_fields[$k]['func'],$args);
 			$w = $tern_wp_event_markup_fields[$k]['func'] !== false ? $w : $post->$v['name'];
 			$s .= "\n        ".str_replace('%post_url%',get_permalink($p),str_replace('%value%',$w,$v['markup']));
 		}
