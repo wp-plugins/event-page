@@ -737,13 +737,14 @@ function tern_wp_event_markup() {
 		return $s;
 	}
 }
-function tern_wp_event_date($a=array()) {
-	global $getWP,$getTIME,$tern_wp_event_defaults,$post,$tern_wp_event_is_list,$tern_wp_event_date;
+function tern_wp_event_date($i) {
+	global $getWP,$getTIME,$tern_wp_event_defaults,$post,$tern_wp_event_is_list,$tern_wp_event_date,$post;
 	$o = $getWP->getOption('tern_wp_events',$tern_wp_event_defaults);
-	$p = !$a['id'] ? $post->ID : $a['id'];
+	$p = !$i ? $post->ID : $i;
 	$b = get_post_meta($p,'_tern_wp_event_start_date',true);
 	$e = get_post_meta($p,'_tern_wp_event_end_date',true);
 	//
+	$a = array('id'=>$p);
 	$c = array(
 		'id'	=>	false,
 		'echo'	=>	false,
