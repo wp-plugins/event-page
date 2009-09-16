@@ -56,7 +56,12 @@ class pagination {
 		}
 	}
 	function get_url($i) {
-		$s = $this->seo ? $this->url.'/'.($i).'/' : $this->url.'?page='.$i;
+		if($this->seo) {
+			$s = $this->url.'/'.($i).'/';
+		}
+		else {
+			$s = strpos($this->url,'?') !== false ? $this->url.'&page='.$i : $this->url.'?page='.$i;
+		}
 		foreach($this->vars as $v) {
 			if(!empty($this->$v)) {
 				$s .= strpos($s,'?') !== false ? '&'.$v.'='.$this->$v : '?'.$v.'='.$this->$v;
