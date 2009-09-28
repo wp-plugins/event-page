@@ -42,7 +42,7 @@ function tern_event_submitForm() {
 			jQuery('#tern_wp_message').html('There was an error while processing your request. Please try again.');
 		}
 	});
-	jQuery('#tern_event_sample_markup').load(tern_wp_root+'/wp-admin/admin.php','page=Configure Mark-Up&action=getmarkup',function () {});
+	jQuery('#tern_event_sample_markup').load(tern_wp_root+'/wp-admin/admin.php','page=Configure Event Mark-Up&action=getmarkup',function () {});
 }
 function tern_event_editField(i) {
 	var p = document.getElementById(i);

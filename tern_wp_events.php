@@ -4,7 +4,7 @@ Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
 Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.0.6
+Version: 2.0.7
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -17,7 +17,7 @@ Licensing : http://www.ternstyle.us/license.html
 ////	Account:
 ////		Added on September 2nd 2008
 ////	Version:
-////		2.0.6
+////		2.0.7
 ////
 ////	Written by Matthew Praetzel. Copyright (c) 2008 Matthew Praetzel.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ $tern_wp_event_defaults = array(
 	'end_time'		=>	0,
 	'format'		=>	'l F j, Y',
 	'time'			=>	'g:ia',
-	'date_markup'	=>	'',
+	'date_markup'	=>	'<small>%l% %F% <span>%t%</span>, %Y%</small>',
 	'time_markup'	=>	'',
 	
 	'd_2_t_sep'		=>	' ',
@@ -48,16 +48,16 @@ $tern_wp_event_defaults = array(
 	'pages'			=>	0,
 	'fields'		=>	array(
 		'Post Title'	=>	array(
-			'name'		=>	'post_title',
+			'field'		=>	'post_title',
 			'markup'	=>	'<div class="tern_wp_event_post_title"><h3><a href="%post_url%">%value%</a></h3></div>'
 		),
 		'Event Date'	=>	array(
-			'name'		=>	'tern_wp_event_date',
-			'markup'	=>	'<div class="tern_wp_event_date">%value%</div>'
+			'field'		=>	'event_date',
+			'markup'	=>	'<div class="tern_wp_event_event_date">%value%</div>'
 		),
-		'Post Content'	=>	array(
-			'name'		=>	'post_content',
-			'markup'	=>	'<div class="tern_wp_event_post_content">%value%</div>'
+		'Post Excerpt'	=>	array(
+			'field'		=>	'post_excerpt',
+			'markup'	=>	'<div class="tern_wp_event_post_excerpt">%value%</div>'
 		)
 	)
 );
@@ -91,27 +91,27 @@ $tern_wp_event_fields = array(
 $tern_wp_event_markup_fields = array(
 	'Post Title'	=>	array(
 		'field'	=>	'post_title',
-		'func'	=>	'get_the_title',
-		'args'	=>	'id'
+		'func'	=>	'the_title',
+		'args'	=>	false
 	),
 	'Event Date'	=>	array(
-		'field'	=>	'tern_wp_event_date',
+		'field'	=>	'event_date',
 		'func'	=>	'tern_wp_event_date',
 		'args'	=>	'id'
 	),
 	'Post Content'	=>	array(
 		'field'	=>	'post_content',
-		'func'	=>	'get_the_content',
+		'func'	=>	'the_content',
 		'args'	=>	array('read more...')
 	),
 	'Post Excerpt'	=>	array(
 		'field'	=>	'post_excerpt',
-		'func'	=>	'get_the_excerpt',
-		'args'	=>	false
+		'func'	=>	'the_excerpt',
+		'args'	=>	array('read more...')
 	),
 	'Post Author'	=>	array(
 		'field'	=>	'post_author',
-		'func'	=>	'get_the_author',
+		'func'	=>	'the_author',
 		'args'	=>	false
 	),
 	'Post Status'	=>	array(
@@ -120,7 +120,7 @@ $tern_wp_event_markup_fields = array(
 	),
 	'Comment Count'	=>	array(
 		'field'	=>	'comment_count',
-		'func'	=>	'get_comments_number',
+		'func'	=>	'comments_number',
 		'args'	=>	false
 	)
 );
@@ -173,11 +173,11 @@ add_action('save_post','tern_wp_events_save');
 //                                **                           **                                 //
 //                                *******************************                                 //
 function tern_wp_events_scripts() {
-	echo '<link rel="stylesheet" href="/wp-content/plugins/event-page/tern_wp_events.css" type="text/css" media="all" />' . "\n";
+	echo '<link rel="stylesheet" href="'.get_bloginfo('home').'/wp-content/plugins/event-page/tern_wp_events.css" type="text/css" media="all" />' . "\n";
 	echo '<script type="text/javascript">var tern_wp_root = "'.get_bloginfo('home').'";</script>';
 }
 function tern_wp_event_js() {
-	if($_REQUEST['page'] == 'Configure Mark-Up') {
+	if($_REQUEST['page'] == 'Configure Event Mark-Up') {
 		wp_enqueue_script('TableDnD',get_bloginfo('home').'/wp-content/plugins/event-page/js/jquery.tablednd_0_5.js.php',array('jquery'),'0.5');
 		wp_enqueue_script('members-list',get_bloginfo('home').'/wp-content/plugins/event-page/js/event-page.js');
 	}
@@ -221,20 +221,20 @@ function tern_wp_events_save($i) {
 	}
 }
 function tern_wp_event_actions() {
-	global $getWP,$tern_wp_event_defaults,$current_user;
+	global $getWP,$tern_wp_event_defaults,$tern_wp_event_markup_fields,$current_user;
 	get_currentuserinfo();
 	$o = $getWP->getOption('tern_wp_events',$tern_wp_event_defaults);
 	//Configure Mark-Up Page Actions
-	if($_REQUEST['page'] == 'Configure Mark-Up') {
+	if($_REQUEST['page'] == 'Configure Event Mark-Up') {
 		if(wp_verify_nonce($_REQUEST['_wpnonce'],'tern_wp_event_nonce')) {
 			switch($_REQUEST['action']) {
 				//update all fields
 				case 'update' :
 					$o['fields'] = array();
-					foreach($_REQUEST['field_titles'] as $k => $v) {
+					foreach($_REQUEST['field_names'] as $k => $v) {
 						$v = stripslashes($v);
 						$o['fields'][$v] = array(
-							'name'		=>	$_REQUEST['field_names'][$k],
+							'field'		=>	$_REQUEST['fields'][$k],
 							'markup'	=>	stripslashes($_REQUEST['field_markups'][$k])
 						);
 					}
@@ -243,9 +243,10 @@ function tern_wp_event_actions() {
 					die();
 				//add a field
 				case 'add' :
-					$f = $_REQUEST['new_field'];
-					$o['fields'][$f] = array(
-						'name'		=>	$f,
+					$n = $_REQUEST['new_field'];
+					$f = empty($tern_wp_event_markup_fields[$n]['field']) ? $n : $tern_wp_event_markup_fields[$n]['field'];
+					$o['fields'][$n] = array(
+						'field'		=>	$f,
 						'markup'	=>	'<div class="tern_wp_event_'.$f.'">%value%</div>'
 					);
 					$o = $getWP->getOption('tern_wp_events',$o,true);
@@ -253,7 +254,7 @@ function tern_wp_event_actions() {
 				case 'remove' :
 					$a = array();
 					foreach($o['fields'] as $k => $v) {
-						if($v['name'] != $_REQUEST['fields'][0]) {
+						if($k != $_REQUEST['fields'][0]) {
 							$a[$k] = $v;
 						}
 					}
@@ -263,12 +264,16 @@ function tern_wp_event_actions() {
 		}
 		//attempted to update all fields without nonce
 		elseif($_REQUEST['action'] == 'update' or $_REQUEST['action'] == 'add' or $_REQUEST['action'] == 'remove') {
-			$tern_msg = '<div id="message" class="updated fade"><p>There was an error whil processing your request. Please try again.</p></div>';
+			$tern_msg = '<div id="message" class="updated fade"><p>There was an error while processing your request. Please try again.</p></div>';
 		}
 		//get sample mark-up
 		if($_REQUEST['action'] == 'getmarkup') {
 			$p = get_posts('numberposts=1&category='.$o['category']);
-			echo htmlentities(tern_wp_event_markup($p[0]->ID));
+			ob_start();
+			tern_wp_event_markup($p[0]->ID);
+			$s = ob_get_contents();
+			ob_end_clean();
+			echo htmlentities($s);
 			die();
 		}
 	}
@@ -283,7 +288,7 @@ function tern_wp_event_menu() {
 		add_menu_page('Event Page','Event Page',10,__FILE__,'tern_wp_event_options');
 		add_submenu_page(__FILE__,'Event Page','Settings',10,__FILE__,'tern_wp_event_options');
 		add_submenu_page(__FILE__,'Date Time Setings','Date Time Setings',10,'Date Time Setings','tern_wp_event_date_options');
-		add_submenu_page(__FILE__,'Configure Mark-Up','Configure Mark-Up',10,'Configure Mark-Up','tern_wp_event_markup_options');
+		add_submenu_page(__FILE__,'Configure Event Mark-Up','Configure Event Mark-Up',10,'Configure Event Mark-Up','tern_wp_event_markup_options');
 	}
 }
 //                                *******************************                                 //
@@ -313,10 +318,9 @@ function tern_wp_event_options() {
 				</td>
 			</tr>
 			<tr valign="top">
-				<th scope="row"><label for="category">What is the term id of the category your events will be filed under?</label></th>
+				<th scope="row"><label for="category">What category will your events be filed under?</label></th>
 				<td>
-					<input type="text" name="category" class="regular-text" value="<?=$o['category'];?>" />
-					<span class="setting-description">This should be a number. i.e. 1 or 46.</span>
+					<?php wp_dropdown_categories('show_option_none=select&hide_empty=0&orderby=name&name=category&selected='.$o['category']); ?>
 				</td>
 			</tr>
 			<tr valign="top">
@@ -465,7 +469,7 @@ function tern_wp_event_markup_options() {
 			}
 		?>
 		</div>
-		<form class="field-form" action="" method="get">
+		<form class="field-form" action="" method="post">
 			<p class="field-box">
 				<label class="hidden" for="new-field-input">Add New Field:</label>
 				<?php
@@ -486,9 +490,9 @@ function tern_wp_event_markup_options() {
 						}
 						$a['Available Meta Fields'][] = array($v,$v);
 					}
-					echo $getOPTS->selectTiered($a,1,0,'new_field','new_field','Add New Field','',false);
+					echo $getOPTS->selectTiered($a,0,0,'new_field','new_field','Add New Field','',false);
 				?>
-				<input type="hidden" id="page" name="page" value="Configure Mark-Up" />
+				<input type="hidden" id="page" name="page" value="Configure Event Mark-Up" />
 				<input type="submit" value="Add New Field" class="button" />
 				<input type="hidden" name="action" value="add" />
 				<input type="hidden" id="_wpnonce" name="_wpnonce" value="<?=wp_create_nonce('tern_wp_event_nonce');?>" />
@@ -518,24 +522,23 @@ function tern_wp_event_markup_options() {
 						foreach($o['fields'] as $k => $v) {
 							$d = empty($d) ? ' class="alternate"' : '';
 					?>
-							<tr id='field-<?=$v['name'];?>'<?=$d;?>>
-								<th scope='row' class='check-column'><input type='checkbox' name='fields[]' id='field_<?=$v['name'];?>' value='<?=$v['name'];?>' /></th>
+							<tr id='field-<?=$v['field'];?>'<?=$d;?>>
+								<th scope='row' class='check-column'><input type='checkbox' name="" value='<?=$v['field'];?>' /></th>
 								<td class="field column-field">
-									<input type="hidden" name="field_names%5B%5D" value="<?=$v['name'];?>" />
-									<strong><?=$v['name'];?></strong><br />
+									<input type="hidden" name="fields%5B%5D" value="<?=$v['field'];?>" />
+									<strong><?=$v['field'];?></strong><br />
 									<div class="row-actions">
-										<span class='edit tern_event_edit'><a href="javascript:tern_event_editField('field-<?=$v['name'];?>');">Edit</a> | </span>
-										<span class='edit'><a href="admin.php?page=Configure%20Mark-Up&fields%5B%5D=<?=$v['name'];?>&action=remove&_wpnonce=<?=wp_create_nonce('tern_wp_event_nonce');?>">Remove</a></span>
+										<span class='edit tern_event_edit'><a href="javascript:tern_event_editField('field-<?=$v['field'];?>');">Edit</a> | </span>
+										<span class='edit'><a href="admin.php?page=Configure%20Event%20Mark-Up&fields%5B%5D=<?=$k;?>&action=remove&_wpnonce=<?=wp_create_nonce('tern_wp_event_nonce');?>">Remove</a></span>
 									</div>
 								</td>
 								<td class="name column-name">
-									<input type="text" name="field_titles%5B%5D" class="tern_event_fields hidden" value="<?=$k;?>" /><br class="tern_event_fields hidden" />
-									<input type="button" value="Update Field" onclick="tern_event_renderField('field-<?=$v['name'];?>');return false;" class="tern_event_fields hidden button" />
-									<span class="tern_event_fields field_titles"><?=$k;?></span>
+									<input type="hidden" name="field_names%5B%5D" value="<?=$k;?>" />
+									<span class="field_titles"><?=$k;?></span>
 								</td>
 								<td class="markup column-markup">
 									<textarea name="field_markups%5B%5D" class="tern_event_fields hidden" rows="4" cols="10"><?=$v['markup'];?></textarea><br class="tern_event_fields hidden" />
-									<input type="button" value="Update Field" onclick="tern_event_renderField('field-<?=$v['name'];?>');return false;" class="tern_event_fields hidden button" />
+									<input type="button" value="Update Field" onclick="tern_event_renderField('field-<?=$v['field'];?>');return false;" class="tern_event_fields hidden button" />
 									<span class="tern_event_fields field_markups"><?php echo htmlentities($v['markup']); ?></span>
 								</td>
 							</tr>
@@ -545,7 +548,7 @@ function tern_wp_event_markup_options() {
 				</tbody>
 			</table>
 			<input type="hidden" name="action" value="update" />
-			<input type="hidden" id="page" name="page" value="Configure Mark-Up" />
+			<input type="hidden" id="page" name="page" value="Configure Event Mark-Up" />
 			<input type="hidden" id="_wpnonce" name="_wpnonce" value="<?=wp_create_nonce('tern_wp_event_nonce');?>" />
 			<input type="hidden" name="_wp_http_referer" value="<?php wp_get_referer(); ?>" />
 		</form>
@@ -553,7 +556,11 @@ function tern_wp_event_markup_options() {
 		<?php
 			$p = get_posts('numberposts=1&category='.$o['category']);
 			$tern_wp_event_post = $p[0]->ID;
-			echo '<pre id="tern_event_sample_markup">'.htmlentities(tern_wp_event_markup()).'</pre>';
+			ob_start();
+			tern_wp_event_markup();
+			$s = ob_get_contents();
+			ob_end_clean();
+			echo '<pre id="tern_event_sample_markup">'.htmlentities($s).'</pre>';
 		?>
 	</div>
 <?php
@@ -679,7 +686,9 @@ function tern_wp_events() {
 			$c = 1;
 			foreach($p as $v) {
 				$tern_wp_event_post = $v->ID;
-				echo '<li class="tern_wp_event_'.$c.' post">'.tern_wp_event_markup().'</li>';
+				echo '<li class="tern_wp_event_'.$c.' post">';
+				tern_wp_event_markup();
+				echo '</li>';
 				$c++;
 			}
 			$tern_wp_event_post = NULL;
@@ -727,18 +736,34 @@ function tern_wp_event_markup() {
 		setup_postdata($post);
 		//
 		foreach($o['fields'] as $k => $v) {
-			$args = '';
+			unset($args);
 			if($tern_wp_event_markup_fields[$k]['args']) {
 				$args = $tern_wp_event_markup_fields[$k]['args'] == 'id' ? array($post->ID) : $tern_wp_event_markup_fields[$k]['args'];
 			}
-			$w = call_user_func_array($tern_wp_event_markup_fields[$k]['func'],$args);
-			$w = $tern_wp_event_markup_fields[$k]['func'] !== false ? $w : $post->$v['name'];
-			$s .= "\n        ".str_replace('%post_url%',get_permalink($p),str_replace('%value%',$w,$v['markup']));
+			//
+			echo "\n";
+			//
+			$s = explode('%value%',$v['markup']);
+			echo str_replace('%post_url%',get_permalink($p),$s[0]);
+			//
+			if(function_exists($tern_wp_event_markup_fields[$k]['func'])) {
+				call_user_func_array($tern_wp_event_markup_fields[$k]['func'],$args);
+			}
+			elseif(isset($tern_wp_event_markup_fields[$k])) {
+				echo $post->$v['field'];
+			}
+			else {
+				$i = get_post_meta($post->ID,$k,true);
+				if(!empty($i)) {
+					echo $i;
+				}
+			}
+			echo str_replace('%post_url%',get_permalink($p),$s[1]);
 		}
 		return $s;
 	}
 }
-function tern_wp_event_date($i) {
+function tern_wp_event_date($i,$f=true) {
 	global $getWP,$getTIME,$tern_wp_event_defaults,$post,$tern_wp_event_is_list,$tern_wp_event_date,$post;
 	$o = $getWP->getOption('tern_wp_events',$tern_wp_event_defaults);
 	$p = !$i ? $post->ID : $i;
