@@ -34,7 +34,7 @@ $tern_wp_event_defaults = array(
 	'end_time'		=>	0,
 	'format'		=>	'l F j, Y',
 	'time'			=>	'g:ia',
-	'date_markup'	=>	'<small>%l% %F% <span>%t%</span>, %Y%</small>',
+	'date_markup'	=>	'<small>%l% %F% <span>%j%</span>, %Y%</small>',
 	'time_markup'	=>	'',
 	
 	'd_2_t_sep'		=>	' ',
@@ -425,7 +425,7 @@ function tern_wp_event_date_options() {
 				<th scope="row"><label for="date_markup">Date mark-up:</label></th>
 				<td>
 					<textarea name="date_markup" style="width:100%;"><?=$o['date_markup'];?></textarea>
-					<span class="setting-description">Use this in place of the date format fields. Use any mark-up you like and employ the '%' character around the PHP date formatting characters. e.g. &lt;span&gt;%l% %F% %t%, %Y%&lt;/span&gt;</span>
+					<span class="setting-description">Use this in place of the date format fields. Use any mark-up you like and employ the '%' character around the PHP date formatting characters. e.g. &lt;span&gt;%l% %F% %j%, %Y%&lt;/span&gt;</span>
 				</td>
 			</tr>
 			<tr valign="top">
