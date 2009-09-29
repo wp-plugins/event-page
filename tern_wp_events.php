@@ -4,7 +4,7 @@ Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
 Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.0.7
+Version: 2.0.8
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -17,7 +17,7 @@ Licensing : http://www.ternstyle.us/license.html
 ////	Account:
 ////		Added on September 2nd 2008
 ////	Version:
-////		2.0.7
+////		2.0.8
 ////
 ////	Written by Matthew Praetzel. Copyright (c) 2008 Matthew Praetzel.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ $tern_wp_event_defaults = array(
 	'format'		=>	'l F j, Y',
 	'time'			=>	'g:ia',
 	'date_markup'	=>	'<small>%l% %F% <span>%j%</span>, %Y%</small>',
-	'time_markup'	=>	'',
+	'time_markup'	=>	'<span>%g%:%i%%a%</span>',
 	
 	'd_2_t_sep'		=>	' ',
 	'time_sep'		=>	' - ',
@@ -53,7 +53,7 @@ $tern_wp_event_defaults = array(
 		),
 		'Event Date'	=>	array(
 			'field'		=>	'event_date',
-			'markup'	=>	'<div class="tern_wp_event_event_date">%value%</div>'
+			'markup'	=>	'<div class="tern_wp_event_date">%value%</div>'
 		),
 		'Post Excerpt'	=>	array(
 			'field'		=>	'post_excerpt',
@@ -736,39 +736,39 @@ function tern_wp_event_markup() {
 		setup_postdata($post);
 		//
 		foreach($o['fields'] as $k => $v) {
-			unset($args);
+			$args = '';
 			if($tern_wp_event_markup_fields[$k]['args']) {
 				$args = $tern_wp_event_markup_fields[$k]['args'] == 'id' ? array($post->ID) : $tern_wp_event_markup_fields[$k]['args'];
 			}
 			//
 			echo "\n";
 			//
-			$s = explode('%value%',$v['markup']);
-			echo str_replace('%post_url%',get_permalink($p),$s[0]);
+			$s = str_replace('%post_url%',get_permalink($post->ID),$v['markup']);
+			$s = explode('%value%',$s);
+			echo $s[0];
 			//
 			if(function_exists($tern_wp_event_markup_fields[$k]['func'])) {
 				call_user_func_array($tern_wp_event_markup_fields[$k]['func'],$args);
 			}
-			elseif(isset($tern_wp_event_markup_fields[$k])) {
-				echo $post->$v['field'];
+			elseif($tern_wp_event_markup_fields[$k]['func'] === false) {
+				echo $post->$v['name'];
 			}
-			else {
-				$i = get_post_meta($post->ID,$k,true);
-				if(!empty($i)) {
-					echo $i;
-				}
-			}
-			echo str_replace('%post_url%',get_permalink($p),$s[1]);
+			echo $s[1];
 		}
 		return $s;
 	}
 }
-function tern_wp_event_date($i,$f=true) {
+function tern_wp_event_date($i,$d=false,$f=true) {
 	global $getWP,$getTIME,$tern_wp_event_defaults,$post,$tern_wp_event_is_list,$tern_wp_event_date,$post;
 	$o = $getWP->getOption('tern_wp_events',$tern_wp_event_defaults);
 	$p = !$i ? $post->ID : $i;
-	$b = get_post_meta($p,'_tern_wp_event_start_date',true);
-	$e = get_post_meta($p,'_tern_wp_event_end_date',true);
+	if(!empty($d)) {
+		$b = $e = $d;
+	}
+	else {
+		$b = get_post_meta($p,'_tern_wp_event_start_date',true);
+		$e = get_post_meta($p,'_tern_wp_event_end_date',true);
+	}
 	//
 	$a = array('id'=>$p);
 	$c = array(
@@ -787,7 +787,7 @@ function tern_wp_event_date($i,$f=true) {
 		$single = true;
 	}
 	//
-	if(empty($o['date_markup'])) {
+	if(empty($o['date_markup']) or !empty($d)) {
 		$s .= gmdate($o['format'],$b);
 		//
 		if($o['show_time'] or !$tern_wp_event_is_list) {
@@ -796,11 +796,11 @@ function tern_wp_event_date($i,$f=true) {
 		}
 		//
 		if(($o['end_time'] or !$tern_wp_event_is_list) and !$single) {
-			if($getTIME->atStartStamp($b) == $getTIME->atStartStamp($e)) {
+			if($getTIME->atStartStamp($b) == $getTIME->atStartStamp($e) and empty($d)) {
 				$s .= empty($o['time_sep']) ? ' - ' : $o['time_sep'];
 				$s .= gmdate($o['time'],$e);
 			}
-			else {
+			elseif(empty($d)) {
 				$s .= empty($o['date_sep']) ? ' -- ' : $o['date_sep'];
 				$s .= gmdate($o['format'],$e);
 				$s .= empty($o['d_2_t_sep']) ? ' ' : $o['d_2_t_sep'];
@@ -841,7 +841,8 @@ function tern_wp_event_date_markup($m) {
 	return gmdate($m[1],$tern_wp_event_date);
 }
 function tern_wp_event_meta_fields($e=false) {
-	global $getWP,$tern_wp_event_defaults,$post,$tern_wp_event_fields;
+	global $getWP,$tern_wp_event_defaults,$post,$tern_wp_event_fields,$tern_wp_event_is_list;
+	$tern_wp_event_is_list = false;
 	$o = $getWP->getOption('tern_wp_events',$tern_wp_event_defaults);
 	$p = !$p ? $post->ID : $p;
 	//
@@ -850,12 +851,12 @@ function tern_wp_event_meta_fields($e=false) {
 		if($v['meta']) {
 			$m = get_post_meta($p,$v['name'],true);
 			if(!empty($m)) {
-				$s .= '<div class="tern_wp_event_meta_data"><label>'.$k.':</label>'.$m.'</div>';
+				$s .= '<div class="tern_wp_event_meta_data"><label>'.$k.': </label>'.$m.'</div>';
 			}
 		}
 	}
-	$s .= '<div class="tern_wp_event_meta_data"><label>Start Date:</label>'.tern_wp_event_date(array('stamp'=>get_post_meta($p,'_tern_wp_event_start_date',true))).'</div>';
-	$s .= '<div class="tern_wp_event_meta_data"><label>End Date:</label>'.tern_wp_event_date(array('stamp'=>get_post_meta($p,'_tern_wp_event_end_date',true))).'</div>';
+	$s .= '<div class="tern_wp_event_meta_data"><label>Start Date: </label>'.tern_wp_event_date($p,get_post_meta($p,'_tern_wp_event_start_date',true),false).'</div>';
+	$s .= '<div class="tern_wp_event_meta_data"><label>End Date: </label>'.tern_wp_event_date($p,get_post_meta($p,'_tern_wp_event_end_date',true),false).'</div>';
 	$s.= '</div>';
 	if($e) {
 		echo $s;
