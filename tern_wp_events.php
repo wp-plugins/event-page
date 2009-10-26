@@ -4,7 +4,7 @@ Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
 Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.0.8
+Version: 2.1
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -17,7 +17,7 @@ Licensing : http://www.ternstyle.us/license.html
 ////	Account:
 ////		Added on September 2nd 2008
 ////	Version:
-////		2.0.8
+////		2.1
 ////
 ////	Written by Matthew Praetzel. Copyright (c) 2008 Matthew Praetzel.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +36,7 @@ $tern_wp_event_defaults = array(
 	'time'			=>	'g:ia',
 	'date_markup'	=>	'<small>%l% %F% <span>%j%</span>, %Y%</small>',
 	'time_markup'	=>	'<span>%g%:%i%%a%</span>',
+	'timezone'		=>	'',
 	
 	'd_2_t_sep'		=>	' ',
 	'time_sep'		=>	' - ',
@@ -435,6 +436,13 @@ function tern_wp_event_date_options() {
 					<span class="setting-description">Use this in place of the time format fields. Use any mark-up you like and employ the '%' character around the PHP date formatting characters. e.g. &lt;span&gt;%g%:%i%%a%&lt;/span&gt;</span>
 				</td>
 			</tr>
+			<tr valign="top">
+				<th scope="row"><label for="timezone">Timezone String to be displayed after dates:</label></th>
+				<td>
+					<input type="text" name="timezone" class="regular-text" value="<?=$o['timezone'];?>" />
+					<span class="setting-description">e.g. EST or EDT</span>
+				</td>
+			</tr>
 		</table>
 		<p class="submit"><input type="submit" name="submit" class="button-primary" value="Save Changes" /></p>
 		<input type="hidden" name="action" value="update" />
@@ -664,14 +672,14 @@ function tern_wp_event_meta() {
 //                                **                           **                                 //
 //                                *******************************                                 //
 function tern_wp_events() {
-	global $getWP,$tern_wp_event_defaults,$wpdb,$tern_wp_event_is_list,$tern_wp_event_post;
+	global $getWP,$tern_wp_event_defaults,$wpdb,$tern_wp_event_is_list,$tern_wp_event_post,$getTIME;
 	$tern_wp_event_is_list = true;
 	$o = $getWP->getOption('tern_wp_events',$tern_wp_event_defaults);
 	//
 	$page = empty($_GET['page']) ? (tern_wp_event_page()-1)*$o['limit'] : (intval($_GET['page'])-1)*$o['limit'];
-	$p = $wpdb->get_results("select ID from $wpdb->posts as p join $wpdb->term_relationships as r on (r.object_id = p.ID and r.term_taxonomy_id = ".$o['category'].") left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_start_date') where m.meta_value > ".time()." order by m.meta_value ".$o['order']." limit ".$page.','.$o['limit']);
+	$p = $wpdb->get_results("select ID from $wpdb->posts as p join $wpdb->term_relationships as r on (r.object_id = p.ID and r.term_taxonomy_id = ".$o['category'].") left join $wpdb->postmeta as o on (p.ID = o.post_id and o.meta_key = '_tern_wp_event_start_date') left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date') where m.meta_value >= ".$getTIME->atStartStamp(time())." order by o.meta_value ".$o['order']." limit ".$page.','.$o['limit']);
 	//
-	$t = $wpdb->get_var("select COUNT(*) from $wpdb->posts as p join $wpdb->term_relationships as r on (r.object_id = p.ID and r.term_taxonomy_id = ".$o['category'].") left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_start_date') where m.meta_value > ".time());
+	$t = $wpdb->get_var("select COUNT(*) from $wpdb->posts as p join $wpdb->term_relationships as r on (r.object_id = p.ID and r.term_taxonomy_id = ".$o['category'].") left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date') where m.meta_value >= ".$getTIME->utcNow());
 	if(!empty($p)) {
 		//pagination
 		$n = new pagination(array(
@@ -707,10 +715,10 @@ function tern_wp_events() {
 	}
 }
 function tern_wp_event_next_upcoming() {
-	global $getWP,$wpdb,$tern_wp_event_defaults,$tern_wp_event_post;
+	global $getWP,$wpdb,$tern_wp_event_defaults,$tern_wp_event_post,$getTIME;
 	$o = $getWP->getOption('tern_wp_events',$tern_wp_event_defaults);
 	//
-	$p = $wpdb->get_var("select ID from $wpdb->posts as p join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_start_date' and m.meta_value > ".time().") left join $wpdb->term_relationships as r on (r.object_id = p.ID) where term_taxonomy_id = ".$o['category']." order by m.meta_value asc limit 1");
+	$p = $wpdb->get_var("select ID from $wpdb->posts as p join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date' and m.meta_value >= ".$getTIME->atStartStamp(time()).") left join $wpdb->postmeta as o on (p.ID = o.post_id and o.meta_key = '_tern_wp_event_start_date') left join $wpdb->term_relationships as r on (r.object_id = p.ID) where term_taxonomy_id = ".$o['category']." order by o.meta_value asc limit 1");
 	$tern_wp_event_post = $p;
 	//
 	echo tern_wp_event_markup();
@@ -794,17 +802,20 @@ function tern_wp_event_date($i,$d=false,$f=true) {
 			$s .= empty($o['d_2_t_sep']) ? ' ' : $o['d_2_t_sep'];
 			$s .= gmdate($o['time'],$b);
 		}
+		if(!empty($o['timezone'])) { $s .= ' '.$o['timezone']; }
 		//
 		if(($o['end_time'] or !$tern_wp_event_is_list) and !$single) {
 			if($getTIME->atStartStamp($b) == $getTIME->atStartStamp($e) and empty($d)) {
 				$s .= empty($o['time_sep']) ? ' - ' : $o['time_sep'];
 				$s .= gmdate($o['time'],$e);
+				if(!empty($o['timezone'])) { $s .= ' '.$o['timezone']; }
 			}
 			elseif(empty($d)) {
 				$s .= empty($o['date_sep']) ? ' -- ' : $o['date_sep'];
 				$s .= gmdate($o['format'],$e);
 				$s .= empty($o['d_2_t_sep']) ? ' ' : $o['d_2_t_sep'];
 				$s .= gmdate($o['time'],$e);
+				if(!empty($o['timezone'])) { $s .= ' '.$o['timezone']; }
 			}
 		}
 	}
@@ -816,18 +827,21 @@ function tern_wp_event_date($i,$d=false,$f=true) {
 			$s .= empty($o['d_2_t_sep']) ? ' ' : $o['d_2_t_sep'];
 			$s .= preg_replace_callback('/\%([a-zA-Z]+)\%/','tern_wp_event_date_markup',$o['time_markup']);
 		}
+		if(!empty($o['timezone'])) { $s .= ' '.$o['timezone']; }
 		//
 		$tern_wp_event_date = $e;
 		if(($o['end_time'] or !$tern_wp_event_is_list) and !$single) {
 			if($getTIME->atStartStamp($b) == $getTIME->atStartStamp($e)) {
 				$s .= empty($o['time_sep']) ? ' - ' : $o['time_sep'];
 				$s .= preg_replace_callback('/\%([a-zA-Z]+)\%/','tern_wp_event_date_markup',$o['time_markup']);
+				if(!empty($o['timezone'])) { $s .= ' '.$o['timezone']; }
 			}
 			else {
 				$s .= empty($o['date_sep']) ? ' -- ' : $o['date_sep'];
 				$s .= preg_replace_callback('/\%([a-zA-Z]+)\%/','tern_wp_event_date_markup',$o['date_markup']);
 				$s .= empty($o['d_2_t_sep']) ? ' ' : $o['d_2_t_sep'];
 				$s .= preg_replace_callback('/\%([a-zA-Z]+)\%/','tern_wp_event_date_markup',$o['time_markup']);
+				if(!empty($o['timezone'])) { $s .= ' '.$o['timezone']; }
 			}
 		}
 	}
