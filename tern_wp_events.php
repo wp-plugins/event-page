@@ -4,7 +4,7 @@ Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
 Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.2
+Version: 2.4
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -17,7 +17,7 @@ Licensing : http://www.ternstyle.us/license.html
 ////	Account:
 ////		Added on September 2nd 2008
 ////	Version:
-////		2.2
+////		2.4
 ////
 ////	Written by Matthew Praetzel. Copyright (c) 2008 Matthew Praetzel.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,8 +163,8 @@ require_once(ABSPATH.'wp-content/plugins/event-page/ternstyle/class/time.php');
 //                                **                           **                                 //
 //                                *******************************                                 //
 add_action('init','tern_wp_event_actions');
-add_action('wp_print_styles','tern_wp_event_styles');
-add_action('wp_print_scripts','tern_wp_event_js');
+add_action('init','tern_wp_event_styles');
+add_action('init','tern_wp_event_js');
 add_action('admin_menu','tern_wp_events_box');
 add_action('admin_menu','tern_wp_event_menu');
 add_action('save_post','tern_wp_events_save');
