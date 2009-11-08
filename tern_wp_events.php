@@ -4,7 +4,7 @@ Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
 Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.4
+Version: 2.5
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -17,7 +17,7 @@ Licensing : http://www.ternstyle.us/license.html
 ////	Account:
 ////		Added on September 2nd 2008
 ////	Version:
-////		2.4
+////		2.5
 ////
 ////	Written by Matthew Praetzel. Copyright (c) 2008 Matthew Praetzel.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -165,6 +165,7 @@ require_once(ABSPATH.'wp-content/plugins/event-page/ternstyle/class/time.php');
 add_action('init','tern_wp_event_actions');
 add_action('init','tern_wp_event_styles');
 add_action('init','tern_wp_event_js');
+add_action('wp_print_scripts','tern_wp_event_js_root');
 add_action('admin_menu','tern_wp_events_box');
 add_action('admin_menu','tern_wp_event_menu');
 add_action('save_post','tern_wp_events_save');
@@ -175,7 +176,8 @@ add_action('save_post','tern_wp_events_save');
 //                                *******************************                                 //
 function tern_wp_event_styles() {
 	wp_enqueue_style('tern_wp_events_css',get_bloginfo('wpurl').'/wp-content/plugins/event-page/tern_wp_events.css');
-	//echo '<link rel="stylesheet" href="'.get_bloginfo('home').'/wp-content/plugins/event-page/tern_wp_events.css" type="text/css" media="all" />' . "\n";
+}
+function tern_wp_event_js_root() {
 	echo '<script type="text/javascript">var tern_wp_root = "'.get_bloginfo('home').'";</script>';
 }
 function tern_wp_event_js() {
