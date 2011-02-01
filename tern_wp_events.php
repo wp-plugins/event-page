@@ -4,7 +4,7 @@ Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
 Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.6.1
+Version: 2.6.2
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -17,7 +17,7 @@ Licensing : http://www.ternstyle.us/license.html
 ////	Account:
 ////		Added on September 2nd 2008
 ////	Version:
-////		2.6.1
+////		2.6.2
 ////
 ////	Written by Matthew Praetzel. Copyright (c) 2008 Matthew Praetzel.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -680,9 +680,9 @@ function tern_wp_events() {
 	$o = $getWP->getOption('tern_wp_events',$tern_wp_event_defaults);
 	//
 	$page = empty($_GET['page']) ? (tern_wp_event_page()-1)*$o['limit'] : (intval($_GET['page'])-1)*$o['limit'];
-	$p = $wpdb->get_results("select ID from $wpdb->posts as p join $wpdb->term_relationships as r on (r.object_id = p.ID and r.term_taxonomy_id = ".$o['category'].") left join $wpdb->postmeta as o on (p.ID = o.post_id and o.meta_key = '_tern_wp_event_start_date') left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date') where m.meta_value >= ".$getTIME->atStartStamp(time())." order by o.meta_value ".$o['order']." limit ".$page.','.$o['limit']);
+	$p = $wpdb->get_results("select ID from $wpdb->posts as p join $wpdb->term_relationships as r join $wpdb->term_taxonomy as t on (r.object_id = p.ID and r.term_taxonomy_id = t.term_taxonomy_id and t.term_id = ".$o['category'].") left join $wpdb->postmeta as o on (p.ID = o.post_id and o.meta_key = '_tern_wp_event_start_date') left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date') where m.meta_value >= ".$getTIME->atStartStamp(time())." order by o.meta_value ".$o['order']." limit ".$page.','.$o['limit']);
 	//
-	$t = $wpdb->get_var("select COUNT(*) from $wpdb->posts as p join $wpdb->term_relationships as r on (r.object_id = p.ID and r.term_taxonomy_id = ".$o['category'].") left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date') where m.meta_value >= ".$getTIME->utcNow());
+	$t = $wpdb->get_var("select COUNT(*) from $wpdb->posts as p join $wpdb->term_relationships as r join $wpdb->term_taxonomy as t on (r.object_id = p.ID and r.term_taxonomy_id = t.term_taxonomy_id and t.term_id = ".$o['category'].") left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date') where m.meta_value >= ".$getTIME->utcNow());
 	if(!empty($p)) {
 		//pagination
 		$n = new pagination(array(
