@@ -4,7 +4,7 @@ Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
 Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.2
+Version: 2.6.2
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -17,7 +17,7 @@ Licensing : http://www.ternstyle.us/license.html
 ////	Account:
 ////		Added on September 2nd 2008
 ////	Version:
-////		2.2
+////		2.6.2
 ////
 ////	Written by Matthew Praetzel. Copyright (c) 2008 Matthew Praetzel.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,8 +163,9 @@ require_once(ABSPATH.'wp-content/plugins/event-page/ternstyle/class/time.php');
 //                                **                           **                                 //
 //                                *******************************                                 //
 add_action('init','tern_wp_event_actions');
-add_action('wp_print_styles','tern_wp_event_styles');
-add_action('wp_print_scripts','tern_wp_event_js');
+add_action('init','tern_wp_event_styles');
+add_action('init','tern_wp_event_js');
+add_action('wp_print_scripts','tern_wp_event_js_root');
 add_action('admin_menu','tern_wp_events_box');
 add_action('admin_menu','tern_wp_event_menu');
 add_action('save_post','tern_wp_events_save');
@@ -175,11 +176,12 @@ add_action('save_post','tern_wp_events_save');
 //                                *******************************                                 //
 function tern_wp_event_styles() {
 	wp_enqueue_style('tern_wp_events_css',get_bloginfo('wpurl').'/wp-content/plugins/event-page/tern_wp_events.css');
-	//echo '<link rel="stylesheet" href="'.get_bloginfo('home').'/wp-content/plugins/event-page/tern_wp_events.css" type="text/css" media="all" />' . "\n";
-	echo '<script type="text/javascript">var tern_wp_root = "'.get_bloginfo('home').'";</script>';
+}
+function tern_wp_event_js_root() {
+	echo '<script type="text/javascript">var tern_wp_root = "'.get_bloginfo('home').'";</script>'."\n";
 }
 function tern_wp_event_js() {
-	if($_REQUEST['page'] == 'Configure Event Mark-Up') {
+	if($_REQUEST['page'] == 'tern-wp-event-page-mark-up') {
 		wp_enqueue_script('TableDnD',get_bloginfo('home').'/wp-content/plugins/event-page/js/jquery.tablednd_0_5.js.php',array('jquery'),'0.5');
 		wp_enqueue_script('members-list',get_bloginfo('home').'/wp-content/plugins/event-page/js/event-page.js');
 	}
@@ -287,10 +289,10 @@ function tern_wp_event_actions() {
 //                                *******************************                                 //
 function tern_wp_event_menu() {
 	if(function_exists('add_menu_page')) {
-		add_menu_page('Event Page','Event Page',10,__FILE__,'tern_wp_event_options');
-		add_submenu_page(__FILE__,'Event Page','Settings',10,__FILE__,'tern_wp_event_options');
-		add_submenu_page(__FILE__,'Date Time Setings','Date Time Setings',10,'Date Time Setings','tern_wp_event_date_options');
-		add_submenu_page(__FILE__,'Configure Event Mark-Up','Configure Event Mark-Up',10,'Configure Event Mark-Up','tern_wp_event_markup_options');
+		add_menu_page('Event Page','Event Page','manage_options',__FILE__,'tern_wp_event_options');
+		add_submenu_page(__FILE__,'Event Page','Settings','manage_options',__FILE__,'tern_wp_event_options');
+		add_submenu_page(__FILE__,'Date Time Setings','Date Time Setings','manage_options','tern-wp-event-page-date-time','tern_wp_event_date_options');
+		add_submenu_page(__FILE__,'Configure Event Mark-Up','Configure Event Mark-Up','manage_options','tern-wp-event-page-mark-up','tern_wp_event_markup_options');
 	}
 }
 //                                *******************************                                 //
@@ -315,7 +317,7 @@ function tern_wp_event_options() {
 			<tr valign="top">
 				<th scope="row"><label for="url">URL for event page</label></th>
 				<td>
-					<input type="text" name="url" class="regular-text" value="<?=$o['url'];?>" />
+					<input type="text" name="url" class="regular-text" value="<?php echo $o['url'];?>" />
 					<span class="setting-description">http://blog.ternstyle.us/events</span>
 				</td>
 			</tr>
@@ -352,7 +354,7 @@ function tern_wp_event_options() {
 		</table>
 		<p class="submit"><input type="submit" name="submit" class="button-primary" value="Save Changes" /></p>
 		<input type="hidden" name="action" value="update" />
-		<input type="hidden" id="_wpnonce" name="_wpnonce" value="<?=wp_create_nonce('tern_wp_event_nonce');?>" />
+		<input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce('tern_wp_event_nonce');?>" />
 		<input type="hidden" name="_wp_http_referer" value="<?php wp_get_referer(); ?>" />
 	</form>
 </div>
@@ -391,63 +393,63 @@ function tern_wp_event_date_options() {
 			<tr valign="top">
 				<th scope="row"><label for="d_2_t_sep">Date from time separating character</label></th>
 				<td>
-					<input type="text" name="d_2_t_sep" class="regular-text" value="<?=$o['d_2_t_sep'];?>" />
+					<input type="text" name="d_2_t_sep" class="regular-text" value="<?php echo $o['d_2_t_sep'];?>" />
 					<span class="setting-description">This string separates the date from the time and defaults to a single space.</span>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="time_sep">Time Separating character</label></th>
 				<td>
-					<input type="text" name="time_sep" class="regular-text" value="<?=$o['time_sep'];?>" />
+					<input type="text" name="time_sep" class="regular-text" value="<?php echo $o['time_sep'];?>" />
 					<span class="setting-description">This character separates the start and end times if the event starts and finishes on the same day and defaults to a single dash with a space on both sides.</span>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="date_sep">Date Separating character</label></th>
 				<td>
-					<input type="text" name="date_sep" class="regular-text" value="<?=$o['date_sep'];?>" />
+					<input type="text" name="date_sep" class="regular-text" value="<?php echo $o['date_sep'];?>" />
 					<span class="setting-description">This character separates the start and end dates if the event starts and finishes on different days and defaults to a double dash with a space on both sides.</span>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="format">Date format:</label></th>
 				<td>
-					<input type="text" name="format" class="regular-text" value="<?=$o['format'];?>" />
+					<input type="text" name="format" class="regular-text" value="<?php echo $o['format'];?>" />
 					<span class="setting-description">This should be a string represetation of the date according to PHP/Wordpress' date formatting parameters. i.e. "l F j, Y". See <a href="http://us.php.net/manual/en/function.date.php">here</a>.</span>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="time">Time format:</label></th>
 				<td>
-					<input type="text" name="time" class="regular-text" value="<?=$o['time'];?>" />
+					<input type="text" name="time" class="regular-text" value="<?php echo $o['time'];?>" />
 					<span class="setting-description">This should be a string represetation of the time according to PHP/Wordpress' date formatting parameters. i.e. "g:ia". See <a href="http://us.php.net/manual/en/function.date.php">here</a>.</span>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="date_markup">Date mark-up:</label></th>
 				<td>
-					<textarea name="date_markup" style="width:100%;"><?=$o['date_markup'];?></textarea>
+					<textarea name="date_markup" style="width:100%;"><?php echo $o['date_markup'];?></textarea>
 					<span class="setting-description">Use this in place of the date format fields. Use any mark-up you like and employ the '%' character around the PHP date formatting characters. e.g. &lt;span&gt;%l% %F% %j%, %Y%&lt;/span&gt;</span>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="time_markup">Time mark-up:</label></th>
 				<td>
-					<textarea name="time_markup" style="width:100%;"><?=$o['time_markup'];?></textarea>
+					<textarea name="time_markup" style="width:100%;"><?php echo $o['time_markup'];?></textarea>
 					<span class="setting-description">Use this in place of the time format fields. Use any mark-up you like and employ the '%' character around the PHP date formatting characters. e.g. &lt;span&gt;%g%:%i%%a%&lt;/span&gt;</span>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="timezone">Timezone String to be displayed after dates:</label></th>
 				<td>
-					<input type="text" name="timezone" class="regular-text" value="<?=$o['timezone'];?>" />
+					<input type="text" name="timezone" class="regular-text" value="<?php echo $o['timezone'];?>" />
 					<span class="setting-description">e.g. EST or EDT</span>
 				</td>
 			</tr>
 		</table>
 		<p class="submit"><input type="submit" name="submit" class="button-primary" value="Save Changes" /></p>
 		<input type="hidden" name="action" value="update" />
-		<input type="hidden" id="_wpnonce" name="_wpnonce" value="<?=wp_create_nonce('tern_wp_event_nonce');?>" />
+		<input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce('tern_wp_event_nonce');?>" />
 		<input type="hidden" name="_wp_http_referer" value="<?php wp_get_referer(); ?>" />
 	</form>
 </div>
@@ -504,7 +506,7 @@ function tern_wp_event_markup_options() {
 				<input type="hidden" id="page" name="page" value="Configure Event Mark-Up" />
 				<input type="submit" value="Add New Field" class="button" />
 				<input type="hidden" name="action" value="add" />
-				<input type="hidden" id="_wpnonce" name="_wpnonce" value="<?=wp_create_nonce('tern_wp_event_nonce');?>" />
+				<input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce('tern_wp_event_nonce');?>" />
 				<input type="hidden" name="_wp_http_referer" value="<?php wp_get_referer(); ?>" />
 			</p>
 		</form>
@@ -531,23 +533,23 @@ function tern_wp_event_markup_options() {
 						foreach($o['fields'] as $k => $v) {
 							$d = empty($d) ? ' class="alternate"' : '';
 					?>
-							<tr id='field-<?=$v['field'];?>'<?=$d;?>>
-								<th scope='row' class='check-column'><input type='checkbox' name="" value='<?=$v['field'];?>' /></th>
+							<tr id='field-<?php echo $v['field'];?>'<?php echo $d;?>>
+								<th scope='row' class='check-column'><input type='checkbox' name="" value='<?php echo $v['field'];?>' /></th>
 								<td class="field column-field">
-									<input type="hidden" name="fields%5B%5D" value="<?=$v['field'];?>" />
-									<strong><?=$v['field'];?></strong><br />
+									<input type="hidden" name="fields%5B%5D" value="<?php echo $v['field'];?>" />
+									<strong><?php echo $v['field'];?></strong><br />
 									<div class="row-actions">
-										<span class='edit tern_event_edit'><a href="javascript:tern_event_editField('field-<?=$v['field'];?>');">Edit</a> | </span>
-										<span class='edit'><a href="admin.php?page=Configure%20Event%20Mark-Up&fields%5B%5D=<?=$k;?>&action=remove&_wpnonce=<?=wp_create_nonce('tern_wp_event_nonce');?>">Remove</a></span>
+										<span class='edit tern_event_edit'><a href="javascript:tern_event_editField('field-<?php echo $v['field'];?>');">Edit</a> | </span>
+										<span class='edit'><a href="admin.php?page=Configure%20Event%20Mark-Up&fields%5B%5D=<?php echo $k;?>&action=remove&_wpnonce=<?php echo wp_create_nonce('tern_wp_event_nonce');?>">Remove</a></span>
 									</div>
 								</td>
 								<td class="name column-name">
-									<input type="hidden" name="field_names%5B%5D" value="<?=$k;?>" />
-									<span class="field_titles"><?=$k;?></span>
+									<input type="hidden" name="field_names%5B%5D" value="<?php echo $k;?>" />
+									<span class="field_titles"><?php echo $k;?></span>
 								</td>
 								<td class="markup column-markup">
-									<textarea name="field_markups%5B%5D" class="tern_event_fields hidden" rows="4" cols="10"><?=$v['markup'];?></textarea><br class="tern_event_fields hidden" />
-									<input type="button" value="Update Field" onclick="tern_event_renderField('field-<?=$v['field'];?>');return false;" class="tern_event_fields hidden button" />
+									<textarea name="field_markups%5B%5D" class="tern_event_fields hidden" rows="4" cols="10"><?php echo $v['markup'];?></textarea><br class="tern_event_fields hidden" />
+									<input type="button" value="Update Field" onclick="tern_event_renderField('field-<?php echo $v['field'];?>');return false;" class="tern_event_fields hidden button" />
 									<span class="tern_event_fields field_markups"><?php echo htmlentities($v['markup']); ?></span>
 								</td>
 							</tr>
@@ -558,7 +560,7 @@ function tern_wp_event_markup_options() {
 			</table>
 			<input type="hidden" name="action" value="update" />
 			<input type="hidden" id="page" name="page" value="Configure Event Mark-Up" />
-			<input type="hidden" id="_wpnonce" name="_wpnonce" value="<?=wp_create_nonce('tern_wp_event_nonce');?>" />
+			<input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce('tern_wp_event_nonce');?>" />
 			<input type="hidden" name="_wp_http_referer" value="<?php wp_get_referer(); ?>" />
 		</form>
 		<h3>Your Mark-Up will look like this:</h3>
@@ -678,9 +680,9 @@ function tern_wp_events() {
 	$o = $getWP->getOption('tern_wp_events',$tern_wp_event_defaults);
 	//
 	$page = empty($_GET['page']) ? (tern_wp_event_page()-1)*$o['limit'] : (intval($_GET['page'])-1)*$o['limit'];
-	$p = $wpdb->get_results("select ID from $wpdb->posts as p join $wpdb->term_relationships as r on (r.object_id = p.ID and r.term_taxonomy_id = ".$o['category'].") left join $wpdb->postmeta as o on (p.ID = o.post_id and o.meta_key = '_tern_wp_event_start_date') left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date') where m.meta_value >= ".$getTIME->atStartStamp(time())." order by o.meta_value ".$o['order']." limit ".$page.','.$o['limit']);
+	$p = $wpdb->get_results("select ID from $wpdb->posts as p join $wpdb->term_relationships as r join $wpdb->term_taxonomy as t on (r.object_id = p.ID and r.term_taxonomy_id = t.term_taxonomy_id and t.term_id = ".$o['category'].") left join $wpdb->postmeta as o on (p.ID = o.post_id and o.meta_key = '_tern_wp_event_start_date') left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date') where m.meta_value >= ".$getTIME->atStartStamp(time())." order by o.meta_value ".$o['order']." limit ".$page.','.$o['limit']);
 	//
-	$t = $wpdb->get_var("select COUNT(*) from $wpdb->posts as p join $wpdb->term_relationships as r on (r.object_id = p.ID and r.term_taxonomy_id = ".$o['category'].") left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date') where m.meta_value >= ".$getTIME->utcNow());
+	$t = $wpdb->get_var("select COUNT(*) from $wpdb->posts as p join $wpdb->term_relationships as r join $wpdb->term_taxonomy as t on (r.object_id = p.ID and r.term_taxonomy_id = t.term_taxonomy_id and t.term_id = ".$o['category'].") left join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date') where m.meta_value >= ".$getTIME->utcNow());
 	if(!empty($p)) {
 		//pagination
 		$n = new pagination(array(
