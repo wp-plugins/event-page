@@ -1,16 +1,21 @@
 /**************************************************************************************************/
-/***
-/***	WORDPRESS EVENT PAGE PLUGIN JAVASCRIPT
-/***	-----------------------------------------------------------------------
-/***	Written by Matthew Praetzel. Copyright (c) 2009 Matthew Praetzel.
-/***	-----------------------------------------------------------------------
-/***	All Rights Reserved. Any use of these functions & scripts without written consent is prohibited.
-/***
+/*
+/*		File:
+/*			admin.js
+/*		Description:
+/*			This file contains Javascript for the administrative aspects of the plugin.
+/*		Date:
+/*			Added on February 14th 2011
+/*		Copyright:
+/*			Copyright (c) 2011 Matthew Praetzel.
+/*		License:
+/*			License:
+/*			This software is licensed under the terms of the GNU Lesser General Public License v3
+/*			as published by the Free Software Foundation. You should have received a copy of of
+/*			the GNU Lesser General Public License along with this software. In the event that you
+/*			have not, please visit: http://www.gnu.org/licenses/gpl-3.0.txt
+/*
 /**************************************************************************************************/
-
-/*-----------------------
-	Variables
------------------------*/
 
 /*-----------------------
 	Initialize
@@ -42,7 +47,7 @@ function tern_event_submitForm() {
 			jQuery('#tern_wp_message').html('There was an error while processing your request. Please try again.');
 		}
 	});
-	jQuery('#tern_event_sample_markup').load(tern_wp_root+'/wp-admin/admin.php','page=Configure Event Mark-Up&action=getmarkup',function () {});
+	jQuery('#tern_event_sample_markup').load(tern_wp_root+'/wp-admin/admin.php','page=tern-wp-event-page-mark-up&action=getmarkup',function () {});
 }
 function tern_event_editField(i) {
 	var p = document.getElementById(i);
