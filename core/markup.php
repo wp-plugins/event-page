@@ -120,7 +120,7 @@ function WP_event_page_markup_actions() {
 //                                **                           **                                 //
 //                                *******************************                                 //
 function WP_event_page_markup_options() {
-	global $wpdb,$getWP,$ternSel,$WP_event_page_defaults,$tern_wp_msg,$tern_wp_event_markup_fields,$tern_wp_meta_fields,$current_user,$tern_wp_event_post;
+	global $wpdb,$getWP,$ternSel,$WP_event_page_defaults,$tern_wp_msg,$WP_event_page_markup_fields,$tern_wp_meta_fields,$current_user,$tern_wp_event_post;
 	$o = $getWP->getOption('tern_wp_events',$WP_event_page_defaults);
 	get_currentuserinfo();
 ?>
