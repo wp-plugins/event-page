@@ -4,7 +4,7 @@ Plugin Name: Event Page
 Plugin URI: http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin
 Description: The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 Author: Matthew Praetzel
-Version: 2.7.2
+Version: 2.7.3
 Author URI: http://www.ternstyle.us/
 Licensing : http://www.ternstyle.us/license.html
 */
@@ -19,7 +19,7 @@ Licensing : http://www.ternstyle.us/license.html
 //			1) list events
 //			2) page through February 14th 2011
 //		Version:
-//			2.7.2
+//			2.7.3
 //		Copyright:
 //			Copyright (c) 2011 Matthew Praetzel.
 //		License:
