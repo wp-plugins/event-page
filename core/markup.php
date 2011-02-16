@@ -56,7 +56,7 @@ function WP_event_page_markup_scripts() {
 //                                **                           **                                 //
 //                                *******************************                                 //
 function WP_event_page_markup_actions() {
-	global $getWP,$WP_event_page_defaults,$tern_wp_event_markup_fields,$current_user;
+	global $getWP,$WP_event_page_defaults,$WP_event_page_markup_fields,$current_user;
 	get_currentuserinfo();
 	$o = $getWP->getOption('tern_wp_events',$WP_event_page_defaults);
 	

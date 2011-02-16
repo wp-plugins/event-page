@@ -74,6 +74,9 @@ function WP_event_page_events() {
 		echo '<h3>Sorry, currently there are no upcoming events.</h3>';
 	}
 }
+function tern_wp_event_next_upcoming() {
+	WP_event_page_next_upcoming();
+}
 function WP_event_page_next_upcoming() {
 	global $getWP,$wpdb,$WP_event_page_defaults,$tern_wp_event_post,$getTIME;
 	$o = $getWP->getOption('tern_wp_events',$WP_event_page_defaults);
@@ -81,7 +84,7 @@ function WP_event_page_next_upcoming() {
 	$p = $wpdb->get_var("select ID from $wpdb->posts as p join $wpdb->postmeta as m on (p.ID = m.post_id and m.meta_key = '_tern_wp_event_end_date' and m.meta_value >= ".$getTIME->atStartStamp(time()).") left join $wpdb->postmeta as o on (p.ID = o.post_id and o.meta_key = '_tern_wp_event_start_date') left join $wpdb->term_relationships as r on (r.object_id = p.ID) where term_taxonomy_id = ".$o['category']." order by o.meta_value asc limit 1");
 	$tern_wp_event_post = $p;
 	//
-	echo WP_event_page_markup();
+	WP_event_page_markup();
 	$tern_wp_event_post = NULL;
 }
 function WP_event_page_paged() {
