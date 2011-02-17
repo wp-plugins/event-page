@@ -18,13 +18,6 @@
 /**************************************************************************************************/
 
 /*-----------------------
-	META
------------------------*/
-#tern_wp_event_meta label, #tern_wp_event_meta input, #tern_wp_event_meta select { font-size:14px; }
-#tern_wp_event_meta div.inside label { display:inline-block;margin:0 10px 10px 0;font-weight:bold; }
-#tern_wp_event_meta input { width:100%;line-height:22px;margin-bottom:10px; }
-#tern_wp_event_meta div.inside span { font-size:10px;font-weight:normal; }
-/*-----------------------
 	LIST
 -----------------------*/
 .tern_wp_events, .tern_wp_events li { width:100%;margin:0;padding:0;list-style:none; }
@@ -47,9 +40,6 @@ li.tern_wp_event_1 { border:0;padding-top:0; }
 .tern_wp_event_meta, .tern_wp_event_meta small { font-size:13px; }
 .tern_wp_event_meta { padding:20px 0 20px 10px;line-height:20px;font-size:13px; }
 .tern_wp_event_meta label { display:inline-block;width:80px;color:#999;font-weight:bold; }
-
-
-
 /*-----------------------
 	BORDERS
 -----------------------*/
