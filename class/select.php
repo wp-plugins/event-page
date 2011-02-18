@@ -10,7 +10,7 @@
 //		Date:
 //			Added on March 23rd 2006 for ternstyle (tm) v1.0.0
 //		Version:
-//			5.0
+//			5.0.1
 //		Copyright:
 //			Copyright (c) 2011 Matthew Praetzel.
 //		License:
@@ -59,7 +59,7 @@ class select {
 		
 	}
 	function compile_options() {
-		call_user_func_array(array($this,$this->a['type']),array());
+		call_user_func_array(array(&$this,$this->a['type']),array());
 	}
 	function select() {
 		foreach((array)$this->a['data'] as $k => $v) {
