@@ -3,20 +3,21 @@ Contributors: mpraetzel
 Donate link: http://www.ternstyle.us/donate
 Tags: events, event page, shows, date, time, dates, event dates, date and time, post date, post time, post event, event list
 Requires at least: 2.8
-Tested up to: 3.0.1
-Stable tag: 2.7.3
+Tested up to: 3.3.1
+Stable tag: 2.7.4
 
-The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
+The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events. If you'd like to see an event plugin for WordPress with more features (repeating events, post list and calendar views, a color coded legend, Google Calendar and map support and more) please visit: `http://www.ternstyle.us/terncal`
 
 == Description ==
 
-The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events sorted in ascending or descending order according to the date and time you specify. Employing pagination you can page through your events. Documentation: `http://wiki.ternstyle.us/index.php/Wordpress_Event_Page_Plugin_Documentation`
+The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events sorted in ascending or descending order according to the date and time you specify. Employing pagination you can page through your events. Documentation: `http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin`
+
+If you'd like to see an event plugin for WordPress with more features (repeating events, post list and calendar views, a color coded legend, Google Calendar and map support and more) please visit: `http://www.ternstyle.us/terncal`
 
 Features:
 
 * List your events in a Wordpress page or post
 * Order your events in ascending or descending order
-* Check to see if there are any upcoming events
 * Show the next upcoming event
 * Pagination to page through events
 * Fully customize your list's HTML code.
@@ -26,6 +27,7 @@ Resources:
 * Homepage for this plugin: `http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin`
 * Documentation: `http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin`
 * Working example: `http://blog.ternstyle.us/events`
+* A more feature rich plugin: `http://www.ternstyle.us/terncal`
 
 == Installation ==
 
@@ -62,6 +64,7 @@ Template Name: Events
 * Homepage for this plugin: `http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin`
 * Documentation: `http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin`
 * Working example: `http://blog.ternstyle.us/events`
+* A more feature rich plugin: `http://www.ternstyle.us/terncal`
 
 == Frequently Asked Questions ==
 

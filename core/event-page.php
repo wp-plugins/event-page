@@ -119,7 +119,12 @@ function WP_event_page_markup() {
 			echo $s[0];
 			//
 			if(function_exists($WP_event_page_markup_fields[$k]['func'])) {
-				call_user_func_array($WP_event_page_markup_fields[$k]['func'],$args);
+				if($args) {
+					call_user_func_array($WP_event_page_markup_fields[$k]['func'],$args);
+				}
+				else {
+					call_user_func($WP_event_page_markup_fields[$k]['func']);
+				}
 			}
 			elseif($WP_event_page_markup_fields[$k]['func'] === false and $post->$v['name']) {
 				echo $post->$v['name'];

@@ -59,6 +59,9 @@ function WP_event_page_save($i) {
 			if($_POST['tern_wp_event_start_meridiem'] == 'pm' and intval($_POST['tern_wp_event_start_hour']) != 12) {
 				$h = intval($_POST['tern_wp_event_start_hour'])+12;
 			}
+			elseif($_POST['tern_wp_event_start_meridiem'] == 'am' and intval($_POST['tern_wp_event_start_hour']) == 12) {
+				$h = 0;
+			}
 			$start = gmmktime($h,$_POST['tern_wp_event_start_minute'],0,$_POST['tern_wp_event_start_month'],$_POST['tern_wp_event_start_day'],$_POST['tern_wp_event_start_year']);
 			update_post_meta($i,$n,$start);
 		}
@@ -66,6 +69,9 @@ function WP_event_page_save($i) {
 			$h = $_POST['tern_wp_event_end_hour'];
 			if($_POST['tern_wp_event_end_meridiem'] == 'pm' and intval($_POST['tern_wp_event_end_hour']) != 12) {
 				$h = intval($_POST['tern_wp_event_end_hour'])+12;
+			}
+			elseif($_POST['tern_wp_event_end_meridiem'] == 'am' and intval($_POST['tern_wp_event_end_hour']) == 12) {
+				$h = 0;
 			}
 			$end = gmmktime($h,$_POST['tern_wp_event_end_minute'],0,$_POST['tern_wp_event_end_month'],$_POST['tern_wp_event_end_day'],$_POST['tern_wp_event_end_year']);
 			$end = $start > $end ? $start : $end;
