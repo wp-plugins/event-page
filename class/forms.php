@@ -1,16 +1,24 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-////	File:
-////		forms.php
-////	Actions:
-////		1) parse form submission into query statement
-////	Account:
-////		Created on May 7th 2006 for ternstyle (tm) v1.0.0
-////		Overhauled on June 25th 2008 for ternstyle (tm) v3.0.0
-////	Version:
-////		2.7
-////
-////	Written by Matthew Praetzel. Copyright (c) 2006 Matthew Praetzel.
+//
+//		File:
+//			forms.php
+//		Description:
+//			Parse post form data and compile SQL statements.
+//		Actions:
+//			1) parse form submission into query statement
+//		Date:
+//			Added on May 7th 2006 for ternstyle (tm) v1.0.0
+//		Version:
+//			2.7
+//		Copyright:
+//			Copyright (c) 2011 Matthew Praetzel.
+//		License:
+//			This software is licensed under the terms of the GNU Lesser General Public License v3
+//			as published by the Free Software Foundation. You should have received a copy of of
+//			the GNU Lesser General Public License along with this software. In the event that you
+//			have not, please visit: http://www.gnu.org/licenses/gpl-3.0.txt
+//
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /****************************************Commence Script*******************************************/

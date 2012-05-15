@@ -1,0 +1,53 @@
+/**************************************************************************************************/
+/*
+/*		File:
+/*			style.css
+/*		Description:
+/*			This file contains CSS for administrative aspects of the plugin.
+/*		Date:
+/*			Added on February 14th 2011
+/*		Copyright:
+/*			Copyright (c) 2011 Matthew Praetzel.
+/*		License:
+/*			License:
+/*			This software is licensed under the terms of the GNU Lesser General Public License v3
+/*			as published by the Free Software Foundation. You should have received a copy of of
+/*			the GNU Lesser General Public License along with this software. In the event that you
+/*			have not, please visit: http://www.gnu.org/licenses/gpl-3.0.txt
+/*
+/**************************************************************************************************/
+
+/*-----------------------
+	LIST
+-----------------------*/
+.tern_wp_events, .tern_wp_events li { width:100%;margin:0;padding:0;list-style:none; }
+.tern_wp_events li { clear:both;margin-top:40px;padding:0; }
+li.tern_wp_event_1 { border:0;padding-top:0; }
+.tern_wp_event_post_title { display:inline-block; }
+.tern_wp_events h3 { display:inline-block;border-right:1px dotted #ccc;margin:0 20px 1px 0;padding:0 22px 0 0;line-height:24px;font-size:24px;font-weight:normal; }
+.tern_wp_events h3 a { color:#333;text-decoration:none; }
+.tern_wp_events h3 a:hover { color:#0000ff; }
+.tern_wp_event_event_date { display:inline-block; }
+.tern_wp_event_event_date span { font-family:Georgia;font-size:24px; }
+.tern_wp_event_post_content, .tern_wp_event_post_excerpt { width:100%;border-top:1px solid #ccc;margin-top:4px;padding-top:12px;font-size:14px; }
+.tern_wp_events p { display:block;margin:8px 0 0 0;text-align:justify; }
+.tern_wp_event_post_excerpt a {  }
+
+.post_footer { clear:both;margin-top:20px;padding:6px 10px 6px 0;text-align:right;font-size:10px;font-style:italic; }
+/*-----------------------
+	EVENTS
+-----------------------*/
+.tern_wp_event_meta, .tern_wp_event_meta small { font-size:13px; }
+.tern_wp_event_meta { padding:20px 0 20px 10px;line-height:20px;font-size:13px; }
+.tern_wp_event_meta label { display:inline-block;width:80px;color:#999;font-weight:bold; }
+/*-----------------------
+	BORDERS
+-----------------------*/
+.tern_pagination { clear:both;padding:20px 0; }
+/*-----------------------
+	PAGINATION
+-----------------------*/
+.tern_pagination, .tern_pagination li { display:inline-block;margin:0;padding:0;list-style:none; }
+.tern_pagination { display:block; }
+.tern_pagination a { display:inline-block;background:#f6f6f6;border:1px solid #ccc;margin-right:6px;padding:0 4px;line-height:22px;color:#666;text-decoration:none; }
+.tern_pagination_current a { color:#ccc; }

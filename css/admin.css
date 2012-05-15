@@ -1,0 +1,35 @@
+/**************************************************************************************************/
+/*
+/*		File:
+/*			admin.css
+/*		Description:
+/*			This file contains CSS for administrative aspects of the plugin.
+/*		Date:
+/*			Added on February 14th 2011
+/*		Copyright:
+/*			Copyright (c) 2011 Matthew Praetzel.
+/*		License:
+/*			License:
+/*			This software is licensed under the terms of the GNU Lesser General Public License v3
+/*			as published by the Free Software Foundation. You should have received a copy of of
+/*			the GNU Lesser General Public License along with this software. In the event that you
+/*			have not, please visit: http://www.gnu.org/licenses/gpl-3.0.txt
+/*
+/**************************************************************************************************/
+
+/*-----------------------
+	ADMIN
+-----------------------*/
+textarea.tern_event_fields { width:100%; }
+
+.tern_wp_event_form { margin-bottom:10px; }
+.tern_wp_pagination { display:block;clear:both;width:100%;margin:0px;paddng:0px; }
+.tern_wp_pagination li { display:inline-block;border-right:1px solid #ccc;padding:5px; }
+.tern_wp_pagination li a { display:block;line-height:18px; }
+/*-----------------------
+	META
+-----------------------*/
+#WP_event_page_meta label, #WP_event_page_meta input, #WP_event_page_meta select { font-size:14px; }
+#WP_event_page_meta div.inside label { display:inline-block;margin:0 10px 10px 0;font-weight:bold; }
+#WP_event_page_meta input { width:100%;line-height:22px;margin-bottom:10px; }
+#WP_event_page_meta div.inside span { font-size:10px;font-weight:normal; }

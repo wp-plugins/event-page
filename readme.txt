@@ -3,8 +3,8 @@ Contributors: mpraetzel
 Donate link: http://www.ternstyle.us/donate
 Tags: events, event page, shows, date, time, dates, event dates, date and time, post date, post time, post event, event list
 Requires at least: 2.8
-Tested up to: 2.8.4
-Stable tag: 2.2
+Tested up to: 3.0.1
+Stable tag: 2.7.3
 
 The Event Page Plugin allows you to create a page, category page or post on your wordpress blog that lists all your events.
 
@@ -18,13 +18,13 @@ Features:
 * Order your events in ascending or descending order
 * Check to see if there are any upcoming events
 * Show the next upcoming event
-* Pagination to page through members list and search results
+* Pagination to page through events
 * Fully customize your list's HTML code.
 
 Resources:
 
 * Homepage for this plugin: `http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin`
-* Documentation: `http://wiki.ternstyle.us/index.php/Wordpress_Event_Page_Plugin_Documentation`
+* Documentation: `http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin`
 * Working example: `http://blog.ternstyle.us/events`
 
 == Installation ==
@@ -54,13 +54,13 @@ Template Name: Events
 * Order your events in ascending or descending order
 * Check to see if there are any upcoming events
 * Show the next upcoming event
-* Pagination to page through members list and search results
+* Pagination to page through events
 * Fully customize your list's HTML code.
 
 == Resources ==
 
 * Homepage for this plugin: `http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin`
-* Documentation: `http://wiki.ternstyle.us/index.php/Wordpress_Event_Page_Plugin_Documentation`
+* Documentation: `http://www.ternstyle.us/products/plugins/wordpress/wordpress-event-page-plugin`
 * Working example: `http://blog.ternstyle.us/events`
 
 == Frequently Asked Questions ==
@@ -68,6 +68,11 @@ Template Name: Events
 = How do I make a post an event? =
 
 When editing a page you'll notice at the bottom of page there is a box entitled "Event Information" fill out the appropriate date and time here. Also, you'll need to place the event in the category that you specified in the Event Page settings.
+
+= How do I display the event meta data like location and url? =
+
+To do this add the following code to your WordPress template files where you'd like the meta data to appear:
+`<?php WP_event_page_meta_fields(true); ?>`
 
 == Screenshots ==
 
