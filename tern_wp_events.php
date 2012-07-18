@@ -6,7 +6,7 @@ Description: The Event Page Plugin allows you to create a page, category page or
 Author: Matthew Praetzel
 Version: 2.0.7
 Author URI: http://www.ternstyle.us/
-Licensing : http://www.ternstyle.us/license.html
+Licensing : http://www.gnu.org/licenses/gpl-3.0.txt
 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
