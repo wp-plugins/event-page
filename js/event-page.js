@@ -4,7 +4,7 @@
 /***	-----------------------------------------------------------------------
 /***	Written by Matthew Praetzel. Copyright (c) 2009 Matthew Praetzel.
 /***	-----------------------------------------------------------------------
-/***	All Rights Reserved. Any use of these functions & scripts without written consent is prohibited.
+
 /***
 /**************************************************************************************************/
 
